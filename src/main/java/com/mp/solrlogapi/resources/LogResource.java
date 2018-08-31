@@ -1,5 +1,6 @@
 package com.mp.solrlogapi.resources;
 
+
 import com.mp.solrlogapi.entidies.Log;
 import com.mp.solrlogapi.repositories.LogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -26,15 +22,27 @@ public class LogResource {
     private LogRepository rp;
 
 
-    	@GetMapping("/log")
+    @GetMapping("/log")
 	public ResponseEntity<?> receberLog(){
 
+    	    Iterable<Log> logs = rp.findAll();
 		try {
 			return ResponseEntity.ok().body(rp.findAll());
 		}catch(Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
+
+    @GetMapping("/log/{metodo}")
+    public ResponseEntity<?> receberLog(@PathVariable("metodo") String metodo){
+
+        Iterable<Log> logs = rp.findLogByMetodo(metodo);
+        try {
+            return ResponseEntity.ok().body(logs);
+        }catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PostMapping("/log")
     public ResponseEntity<?> salvarLog(@Valid @RequestBody Log log, BindingResult bindingResult){
